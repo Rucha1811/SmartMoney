@@ -9,7 +9,7 @@
 return [
     // Gemini API Configuration
     'gemini_api_key' => getenv('GEMINI_API_KEY') ?: '', // Get from environment or set here
-    'gemini_model' => 'gemini-pro',
+    'gemini_model' => 'gemini-2.5-flash',
     'gemini_timeout' => 10,
     
     // Alpha Vantage Configuration (Optional - for enhanced data)

@@ -4,8 +4,8 @@
  */
 
 $CHATBOARD_CONFIG = [
-    'model' => 'gemini-pro',
-    'api_url' => 'https://generativelanguage.googleapis.com/v1beta/models/',
+    'model' => 'gemini-2.5-flash',
+    'api_url' => 'https://generativelanguage.googleapis.com/v1/models/',
     'temperature' => 0.7,
     'max_tokens' => 2048,
     'max_history' => 50,

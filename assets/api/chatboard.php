@@ -9,6 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// Load .env file
+loadEnv();
+
 // Load configuration
 require_once '../config/chatboard.config.php';
 
@@ -101,7 +104,7 @@ function generateChatResponse($message, $context = []) {
  * Call Gemini API
  */
 function callGeminiAPI($apiKey, $prompt, $history = []) {
-    $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' . $apiKey;
+    $url = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
     
     // Build messages array
     $messages = [];
@@ -263,6 +266,45 @@ function clearConversationHistory($id = 'default') {
     
     if (file_exists($cacheFile)) {
         unlink($cacheFile);
+    }
+    
+    return true;
+}
+
+/**
+ * Load .env file and set environment variables
+ */
+function loadEnv() {
+    $envFile = __DIR__ . '/../../.env';
+    
+    if (!file_exists($envFile)) {
+        return false;
+    }
+    
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    
+    foreach ($lines as $line) {
+        // Skip comments
+        if (strpos($line, '#') === 0) {
+            continue;
+        }
+        
+        // Parse KEY=value
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value);
+            
+            // Remove quotes if present
+            if (preg_match('/^"(.+)"$/', $value, $matches)) {
+                $value = $matches[1];
+            } elseif (preg_match('/^\'(.+)\'$/', $value, $matches)) {
+                $value = $matches[1];
+            }
+            
+            // Set environment variable
+            putenv("$key=$value");
+        }
     }
     
     return true;
