@@ -101,7 +101,7 @@ function generateChatResponse($message, $context = []) {
 }
 
 /**
- * Call Gemini API
+ * Call Gemini API with rate limit handling
  */
 function callGeminiAPI($apiKey, $prompt, $history = []) {
     $url = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
@@ -133,39 +133,90 @@ function callGeminiAPI($apiKey, $prompt, $history = []) {
         ]
     ];
     
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    // Retry logic for rate limits
+    $maxRetries = 2;
+    $retryDelay = 2; // seconds
     
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    
-    if ($httpCode !== 200) {
+    for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        // Success
+        if ($httpCode === 200) {
+            $result = json_decode($response, true);
+            
+            if (!isset($result['candidates'][0]['content']['parts'][0]['text'])) {
+                return [
+                    'success' => false,
+                    'error' => 'Invalid API response',
+                    'text' => 'I could not generate a response. Please try again.'
+                ];
+            }
+            
+            return [
+                'success' => true,
+                'text' => $result['candidates'][0]['content']['parts'][0]['text']
+            ];
+        }
+        
+        // Rate limit error - retry with delay
+        if ($httpCode === 429) {
+            if ($attempt < $maxRetries) {
+                sleep($retryDelay);
+                $retryDelay *= 2; // Exponential backoff
+                continue;
+            } else {
+                // All retries exhausted - use fallback
+                return generateMockChatResponse($prompt);
+            }
+        }
+        
+        // Other errors
         return [
             'success' => false,
             'error' => 'API Error: ' . $httpCode,
-            'text' => 'Sorry, I encountered an error. Please try again.'
+            'text' => 'Sorry, I encountered an error. Please try again later.'
         ];
     }
     
-    $result = json_decode($response, true);
+    return generateMockChatResponse($prompt);
+}
+
+/**
+ * Generate mock chat response for rate limit fallback
+ */
+function generateMockChatResponse($prompt) {
+    $responses = [
+        'budget' => "Here are some budgeting tips:\n\n1. **Track Your Spending** - Know where your money goes\n2. **50/30/20 Rule** - 50% needs, 30% wants, 20% savings\n3. **Set Categories** - Create budget categories that match your life\n4. **Review Monthly** - Check your budget every month\n5. **Automate Savings** - Pay yourself first, automatically",
+        'invest' => "Starting with investments:\n\n1. **Start Small** - You don't need much to begin\n2. **Diversify** - Don't put all eggs in one basket\n3. **Long-term View** - Investing is a marathon, not a sprint\n4. **Low-cost Index Funds** - Great for beginners\n5. **Educate Yourself** - Learn before you invest significant amounts",
+        'save' => "Money-saving strategies:\n\n1. **Automate Transfers** - Move money to savings automatically\n2. **Cut Subscriptions** - Review unused subscriptions\n3. **Use Cashback** - Get rewards on purchases\n4. **Meal Plan** - Reduce food waste and spending\n5. **Find Side Income** - Increase earnings, not just reduce spending",
+        'goals' => "Setting financial goals:\n\n1. **Be Specific** - Not just 'save more' but '$5000 by year-end'\n2. **Make it Measurable** - Track progress\n3. **Set Timeline** - When do you want to achieve it?\n4. **Break it Down** - Divide into smaller milestones\n5. **Review Regularly** - Adjust as life changes",
+        'default' => "I'm your AI financial advisor! I can help with:\n\n• Budgeting and expense management\n• Investment strategies\n• Saving tips and money hacks\n• Financial goal setting\n• Portfolio analysis\n\nWhat would you like to know about?"
+    ];
     
-    if (!isset($result['candidates'][0]['content']['parts'][0]['text'])) {
-        return [
-            'success' => false,
-            'error' => 'Invalid API response',
-            'text' => 'I could not generate a response. Please try again.'
-        ];
+    $keyword = strtolower($prompt);
+    $selected = $responses['default'];
+    
+    foreach ($responses as $key => $response) {
+        if ($key !== 'default' && strpos($keyword, $key) !== false) {
+            $selected = $response;
+            break;
+        }
     }
     
     return [
         'success' => true,
-        'text' => $result['candidates'][0]['content']['parts'][0]['text']
+        'text' => $selected,
+        'source' => 'fallback'
     ];
 }
 

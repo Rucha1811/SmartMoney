@@ -287,19 +287,42 @@ function generateMockPredictions($market, $technicalAnalysis) {
     ];
     
     $recommendations = ['BUY', 'HOLD', 'SELL'];
+    $targetChanges = [
+        'BUY' => ['+3% to +8%', '+5% to +12%', '+7% to +15%'],
+        'HOLD' => ['-1% to +1%', '-2% to +2%', '+0% to +3%'],
+        'SELL' => ['-2% to -5%', '-3% to -8%', '-5% to -10%']
+    ];
+    
+    $outerReasons = [
+        'Strong Uptrend',
+        'Mild Uptrend',
+        'Mixed signals',
+        'Downward pressure',
+        'Consolidating'
+    ];
+    
     $idx = 0;
+    $seed = (int)(microtime(true) * 1000) % 100;
     
     foreach ($technicalAnalysis as $symbol => $analysis) {
-        $rec = $recommendations[$idx % 3];
+        // Vary prediction using timestamp to ensure different results each time
+        $recIndex = ($idx + $seed) % 3;
+        $rec = $recommendations[$recIndex];
+        
+        $targetIndex = ($idx + $seed) % count($targetChanges[$rec]);
+        $targetChange = $targetChanges[$rec][$targetIndex];
+        
+        $reasonIndex = ($idx + $seed) % count($outerReasons);
+        $reason = $outerReasons[$reasonIndex];
         
         $predictions['stocks'][] = [
             'symbol' => $symbol,
             'prediction' => $rec,
-            'target_price_change' => $rec === 'BUY' ? '+5% to +12%' : ($rec === 'SELL' ? '-3% to -8%' : '-2% to +2%'),
-            'confidence' => (70 + rand(0, 20)) . '%',
-            'reasoning' => generateReasoning($symbol, $analysis, $rec),
+            'target_price_change' => $targetChange,
+            'confidence' => (50 + rand(15, 45)) . '%',
+            'reasoning' => $reason . '. ' . generateReasoning($symbol, $analysis, $rec),
             'timeframe' => '1-3 months',
-            'technical_score' => round($analysis['rsi'], 1),
+            'technical_score' => round($analysis['rsi'] + rand(-5, 5), 1),
         ];
         
         $idx++;
@@ -314,13 +337,31 @@ function generateMockPredictions($market, $technicalAnalysis) {
 function generateReasoning($symbol, $analysis, $prediction) {
     $trend = $analysis['trend'];
     
-    if ($prediction === 'BUY') {
-        return ucfirst($trend) . ' observed. Technical indicators support upside potential.';
-    } elseif ($prediction === 'SELL') {
-        return ucfirst($trend) . ' noted. Resistance levels limiting upside.';
-    } else {
-        return "Mixed signals. Current data suggests consolidation phase.";
-    }
+    $reasons = [
+        'BUY' => [
+            'Technical indicators support upside potential.',
+            'Strong support level detected.',
+            'Positive momentum identified.',
+            'Institutional buying pressure noted.'
+        ],
+        'SELL' => [
+            'Resistance levels limiting upside.',
+            'Bearish divergence spotted.',
+            'Overhead supply zone identified.',
+            'Weak volume support detected.'
+        ],
+        'HOLD' => [
+            'Current data suggests consolidation phase.',
+            'Neutral signals with lack of momentum.',
+            'Awaiting breakout confirmation.',
+            'Balanced risk-reward at current levels.'
+        ]
+    ];
+    
+    $reasonList = $reasons[$prediction] ?? ['No clear signals detected.'];
+    $selectedReason = $reasonList[array_rand($reasonList)];
+    
+    return $selectedReason;
 }
 
 /**
