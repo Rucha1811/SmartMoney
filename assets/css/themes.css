@@ -1,0 +1,141 @@
+:root[data-theme="dark-pro"] {
+    /* Midnight Obsidian Theme */
+    --color-primary: #3b82f6;
+    /* Electric Blue */
+    --color-primary-rgb: 59, 130, 246;
+    --color-secondary: #8b5cf6;
+    /* Neon Purple */
+    --color-accent: #f43f5e;
+    /* Rose */
+    --color-warning: #f59e0b;
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+
+    /* Backgrounds */
+    --bg-app: #09090b;
+    /* Very Dark Zinc */
+    --bg-sidebar: #131316;
+    /* Slightly lighter */
+    --bg-card: #18181b;
+    /* Zinc 900 */
+    --bg-card-hover: #27272a;
+    /* Zinc 800 */
+    --bg-input: #09090b;
+    --bg-primary: #09090b;
+
+    /* Text */
+    --text-primary: #f8fafc;
+    /* Slate 50 */
+    --text-secondary: #94a3b8;
+    /* Slate 400 */
+    --text-tertiary: #64748b;
+
+    /* Borders & Dividers */
+    --border-subtle: #27272a;
+    --border-focus: #3b82f6;
+    --border-color: #27272a;
+
+    /* Effects */
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --glass-bg: rgba(24, 24, 27, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --backdrop-blur: 16px;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --gradient-card: linear-gradient(145deg, #18181b 0%, #09090b 100%);
+}
+
+:root[data-theme="light-professional"] {
+    /* Nordic Frost Theme */
+    --color-primary: #2563eb;
+    /* Royal Blue */
+    --color-primary-rgb: 37, 99, 235;
+    --color-secondary: #4f46e5;
+    /* Indigo */
+    --color-accent: #e11d48;
+    /* Crimson */
+    --color-warning: #d97706;
+    --color-success: #059669;
+    --color-danger: #dc2626;
+
+    --bg-app: #f8fafc;
+    /* Slate 50 */
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f1f5f9;
+    /* Slate 100 */
+    --bg-input: #f8fafc;
+    --bg-primary: #f8fafc;
+
+    --text-primary: #0f172a;
+    /* Slate 900 */
+    --text-secondary: #64748b;
+    /* Slate 500 */
+    --text-tertiary: #94a3b8;
+
+    --border-subtle: #e2e8f0;
+    /* Slate 200 */
+    --border-focus: #2563eb;
+    --border-color: #e2e8f0;
+
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 0, 0, 0.05);
+    --backdrop-blur: 20px;
+
+    --gradient-primary: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    --gradient-card: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+}
+
+:root[data-theme="glass"] {
+    /* Cyberware Holographic Theme */
+    --color-primary: #0ea5e9;
+    /* Cyan */
+    --color-primary-rgb: 14, 165, 233;
+    --color-secondary: #d946ef;
+    /* Magenta */
+    --color-accent: #f43f5e;
+    --color-warning: #f59e0b;
+    --color-success: #10b981;
+    --color-danger: #ef4444;
+
+    /* Glassmorphism overrides */
+    --bg-app: #030014;
+    /* Deep Abyss */
+    --bg-sidebar: rgba(10, 10, 25, 0.6);
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+    --bg-input: rgba(0, 0, 0, 0.4);
+    --bg-primary: rgba(0, 0, 0, 0.4);
+
+    --text-primary: #f0fdfa;
+    /* Teal 50 */
+    --text-secondary: rgba(240, 253, 250, 0.7);
+    --text-tertiary: rgba(240, 253, 250, 0.4);
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-focus: #0ea5e9;
+    --border-color: rgba(255, 255, 255, 0.08);
+
+    --shadow-sm: 0 4px 20px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+
+    --glass-bg: rgba(10, 10, 25, 0.4);
+    --glass-border: rgba(14, 165, 233, 0.2);
+    --backdrop-blur: 30px;
+
+    --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #d946ef 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
+/* Global Transition */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
