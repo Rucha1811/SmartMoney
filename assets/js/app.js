@@ -107,6 +107,17 @@ const App = {
             return window.InsightsView.render();
         });
 
+        // AI Chatboard View
+        Router.add('chatboard', async () => {
+            if (window.ChatboardView) {
+                window.ChatboardView.init();
+                return '';
+            }
+            await this.loadScript('assets/js/views/chatboard.js');
+            window.ChatboardView.init();
+            return '';
+        });
+
         // Register View
         Router.add('register', async () => {
             if (window.RegisterView) return window.RegisterView.render();

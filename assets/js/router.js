@@ -57,6 +57,11 @@ const Router = {
                 setTimeout(() => InsightsView.init(), 100);
             }
 
+            // Initialize chatboard if on chatboard page
+            if (hash === 'chatboard' && window.ChatboardView && window.ChatboardView.init) {
+                setTimeout(() => ChatboardView.init(), 100);
+            }
+
             // Allow views to run post-render scripts if needed (simple event dispatch)
             window.dispatchEvent(new CustomEvent('viewLoaded', { detail: { view: hash } }));
 
