@@ -20,7 +20,7 @@ window.ChatboardView = {
      * Render chatboard UI
      */
     renderView() {
-        const content = document.getElementById('app-content');
+        const content = document.getElementById('view-container');
         content.innerHTML = `
             <div class="chatboard-container">
                 <div class="chatboard-header">
